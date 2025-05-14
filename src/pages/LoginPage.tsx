@@ -5,7 +5,7 @@ import type React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { signIn } from "../database/auth";
+import { signIn } from "../handlers/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

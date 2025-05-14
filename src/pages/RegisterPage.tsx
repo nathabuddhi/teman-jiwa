@@ -5,7 +5,7 @@ import type React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { registerUser, validatePassword } from "../database/auth";
+import { registerAccount, validatePassword } from "../handlers/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,6 +17,15 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
+import { Calendar } from "@/components/ui/calendar";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 export default function RegisterPage() {
     const [email, setEmail] = useState("");
@@ -24,6 +33,9 @@ export default function RegisterPage() {
     const [displayName, setDisplayName] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [loading, setLoading] = useState(false);
+    const [dateOfBirth, setDateOfBirth] = useState<Date | undefined>(
+        new Date()
+    );
 
     const navigate = useNavigate();
 
@@ -46,14 +58,38 @@ export default function RegisterPage() {
             return;
         }
 
+        if (!dateOfBirth) {
+            toast.error("Please select your date of birth.");
+            return;
+        }
+
+        const today = new Date();
+        const age = today.getFullYear() - dateOfBirth.getFullYear();
+        const monthDiff = today.getMonth() - dateOfBirth.getMonth();
+        const dayDiff = today.getDate() - dateOfBirth.getDate();
+
+        if (
+            age < 12 ||
+            (age === 12 && (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)))
+        ) {
+            if (import.meta.env.VITE_ENVIRONMENT !== "development") {
+                toast.error("You must be at least 12 years old to register.");
+                return;
+            }
+        }
+
         setLoading(true);
 
         try {
-            await registerUser(email, password, displayName);
-            toast.success("Account created successfully!");
-            navigate("/");
+            await registerAccount(
+                email,
+                password,
+                displayName,
+                dateOfBirth,
+            );
+            toast.info("Please verify your email address.");
+            navigate("/verify?email=" + email);
         } catch (error: any) {
-            console.log(error.message);
             if (
                 error.message === "Firebase: Error (auth/email-already-in-use)."
             ) {
@@ -81,7 +117,7 @@ export default function RegisterPage() {
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-lightgreen bg-opacity-20 px-4">
-            <Card className="w-full max-w-md">
+            <Card className="w-full max-w-md bg-white border-0 shadow-lg rounded-lg">
                 <CardHeader className="space-y-1">
                     <CardTitle className="text-2xl font-bold text-center text-darkgreen">
                         Create an Account
@@ -103,6 +139,35 @@ export default function RegisterPage() {
                                 disabled={loading}
                                 required
                             />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="dateOfBirth">Date Of Birth</Label>
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant={"outline"}
+                                        className={cn(
+                                            "w-full justify-start text-left font-normal",
+                                            !dateOfBirth &&
+                                                "text-muted-foreground"
+                                        )}>
+                                        <CalendarIcon className="mr-2 h-4 w-4" />
+                                        {dateOfBirth ? (
+                                            format(dateOfBirth, "PPP")
+                                        ) : (
+                                            <span>Pick a date</span>
+                                        )}
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0 bg-white z-50 shadow-md border rounded-md">
+                                    <Calendar
+                                        mode="single"
+                                        selected={dateOfBirth}
+                                        onSelect={setDateOfBirth}
+                                        initialFocus
+                                    />
+                                </PopoverContent>
+                            </Popover>
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="email">Email</Label>

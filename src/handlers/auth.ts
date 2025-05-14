@@ -2,27 +2,16 @@ import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     signOut as firebaseSignOut,
-    onAuthStateChanged,
-    type User as FirebaseUser,
 } from "firebase/auth";
-import type { User } from "../types/user";
 import { auth, firestore } from "./firebase";
 import { collection, doc, setDoc } from "firebase/firestore";
 
-export const formatUser = (user: FirebaseUser): User => {
-    return {
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
-    };
-};
-
-export const registerUser = async (
+export const registerAccount = async (
     email: string,
     password: string,
-    displayName: string
-): Promise<User> => {
+    displayName: string,
+    dateOfBirth: Date
+): Promise<void> => {
     try {
         const userCredential = await createUserWithEmailAndPassword(
             auth,
@@ -30,14 +19,13 @@ export const registerUser = async (
             password
         );
         await setDoc(
-            doc(collection(firestore, "Users"), userCredential.user.uid),
+            doc(collection(firestore, "users"), userCredential.user.uid),
             {
                 email: userCredential.user.email,
-                displayName: displayName,
+                full_name: displayName,
+                date_of_birth: dateOfBirth,
             }
         );
-
-        return formatUser(userCredential.user);
     } catch (error: any) {
         throw new Error(error.message || "Failed to register user");
     }
@@ -46,14 +34,9 @@ export const registerUser = async (
 export const signIn = async (
     email: string,
     password: string
-): Promise<User> => {
+): Promise<void> => {
     try {
-        const userCredential = await signInWithEmailAndPassword(
-            auth,
-            email,
-            password
-        );
-        return formatUser(userCredential.user);
+        await signInWithEmailAndPassword(auth, email, password);
     } catch (error: any) {
         throw new Error(error.message || "Failed to sign in");
     }
@@ -65,19 +48,6 @@ export const signOut = async (): Promise<void> => {
     } catch (error: any) {
         throw new Error(error.message || "Failed to sign out");
     }
-};
-
-export const getCurrentUser = (): User | null => {
-    const user = auth.currentUser;
-    return user ? formatUser(user) : null;
-};
-
-export const onAuthStateChange = (
-    callback: (user: User | null) => void
-): (() => void) => {
-    return onAuthStateChanged(auth, (user) => {
-        callback(user ? formatUser(user) : null);
-    });
 };
 
 export function validatePassword(password: string): string {

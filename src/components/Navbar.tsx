@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { onAuthStateChanged, signOut, type User } from "firebase/auth";
-import { auth } from "@/database/firebase";
+import { auth } from "@/handlers/firebase";
+import { toast } from "sonner";
 
 const navItems = [
     { name: "HOME", href: "/" },
@@ -30,7 +31,7 @@ export function Navbar() {
         try {
             await signOut(auth);
         } catch (err) {
-            console.error("Logout failed:", err);
+            toast.error("Logout failed: " + (err as Error).message);
         }
     };
 
