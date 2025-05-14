@@ -5,7 +5,7 @@ import type React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { registerUser } from "../database/auth";
+import { registerUser, validatePassword } from "../database/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,17 +31,18 @@ export default function RegisterPage() {
         e.preventDefault();
 
         if (!email || !password || !displayName || !confirmPassword) {
-            toast.error("Please fill in all fields");
+            toast.error("Please fill in all fields.");
+            return;
+        }
+
+        let passwordValidation = validatePassword(password.trim());
+        if (passwordValidation !== "") {
+            toast.error(passwordValidation);
             return;
         }
 
         if (password !== confirmPassword) {
-            toast.error("Passwords do not match");
-            return;
-        }
-
-        if (password.length < 6) {
-            toast.error("Password must be at least 6 characters");
+            toast.error("Passwords do not match.");
             return;
         }
 
@@ -52,7 +53,27 @@ export default function RegisterPage() {
             toast.success("Account created successfully!");
             navigate("/");
         } catch (error: any) {
-            toast.error(error.message || "Failed to create account");
+            console.log(error.message);
+            if (
+                error.message === "Firebase: Error (auth/email-already-in-use)."
+            ) {
+                toast.error("Email already in use.");
+            } else if (
+                error.message === "Firebase: Error (auth/invalid-email)."
+            ) {
+                toast.error("Invalid email address.");
+            } else if (
+                error.message === "Firebase: Error (auth/weak-password)."
+            ) {
+                toast.error(
+                    "Password should be at least 8 characters, contain at least one uppercase letter, one lowercase letter, one number, and one special character."
+                );
+            } else {
+                toast.error(
+                    "An error occured: " + error.message ||
+                        "An unknown error occured."
+                );
+            }
         } finally {
             setLoading(false);
         }

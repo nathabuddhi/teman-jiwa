@@ -40,7 +40,11 @@ export default function LoginPage() {
             toast.success("Logged in successfully!");
             navigate("/");
         } catch (error: any) {
-            toast.error(error.message || "Failed to log in");
+            if (
+                error.message === "Firebase: Error (auth/invalid-credential)."
+            ) {
+                toast.error("Invalid Credentials. Please try again.");
+            }
         } finally {
             setLoading(false);
         }

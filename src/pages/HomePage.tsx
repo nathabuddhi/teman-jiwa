@@ -9,10 +9,10 @@ export default function HomePage() {
                 <div
                     className="relative w-full h-[400px] md:h-[500px] bg-cover bg-center"
                     style={{
-                        backgroundImage: "home.png",
+                        backgroundImage: `url("./home.png")`,
                         backgroundPosition: "center 25%",
                     }}>
-                    <div className="absolute inset-0 bg-black bg-opacity-20 flex items-end">
+                    <div className="absolute inset-0 bg-transparent bg-opacity-20 flex items-end">
                         <div className="w-full bg-lightgreen bg-opacity-80 p-4">
                             <h1 className="text-2xl md:text-3xl font-bold text-center text-darkgreen">
                                 SDG 3: Good Health and Well-Being
