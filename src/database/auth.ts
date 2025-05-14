@@ -3,11 +3,11 @@ import {
     signInWithEmailAndPassword,
     signOut as firebaseSignOut,
     onAuthStateChanged,
-    updateProfile,
     type User as FirebaseUser,
 } from "firebase/auth";
 import type { User } from "../types/user";
 import { auth, firestore } from "./firebase";
+import { collection, doc, setDoc } from "firebase/firestore";
 
 export const formatUser = (user: FirebaseUser): User => {
     return {
@@ -28,6 +28,13 @@ export const registerUser = async (
             auth,
             email,
             password
+        );
+        await setDoc(
+            doc(collection(firestore, "Users"), userCredential.user.uid),
+            {
+                email: userCredential.user.email,
+                displayName: displayName,
+            }
         );
 
         return formatUser(userCredential.user);

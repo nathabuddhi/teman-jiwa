@@ -30,7 +30,6 @@ export default function RegisterPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Validate form
         if (!email || !password || !displayName || !confirmPassword) {
             toast.error("Please fill in all fields");
             return;
