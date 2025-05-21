@@ -65,6 +65,9 @@ export function Navbar() {
                     </nav>
                 </div>
 
+                <HyperText key={userName} className="text-xs w-30">{`Welcome, ${
+                    userName.split(" ")[0]
+                }`}</HyperText>
                 <div className="hidden md:block">
                     {user ? (
                         <Button
@@ -78,11 +81,6 @@ export function Navbar() {
                             <Link to="/login">LOGIN</Link>
                         </Button>
                     )}
-                    <HyperText
-                        key={userName}
-                        className="text-xs w-30">{`Welcome, ${
-                        userName.split(" ")[0]
-                    }`}</HyperText>
                 </div>
 
                 <div className="md:hidden">
