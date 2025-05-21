@@ -1,28 +1,15 @@
 import { type ReactNode, useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged, type User } from "firebase/auth";
-import { auth, firestore } from "../handlers/firebase";
+import { auth } from "../lib/firebase";
 import { toast } from "sonner";
-import { collection, doc, getDoc } from "firebase/firestore";
+import { getCurrUserRole } from "@/handlers/auth";
 
 type AccessLevel = "public" | "guest" | "auth" | "user" | "admin" | "expert";
 
 interface RouteGuardProps {
     children: ReactNode;
     access?: AccessLevel;
-}
-
-async function getRole(userId: string): Promise<AccessLevel> {
-    const expert = await getDoc(doc(collection(firestore, "experts"), userId));
-    if (expert.exists()) return "expert";
-
-    const admin = await getDoc(doc(collection(firestore, "admins"), userId));
-    if (admin.exists()) return "admin";
-
-    const user = await getDoc(doc(collection(firestore, "users"), userId));
-    if (user.exists()) return "user";
-
-    return "guest";
 }
 
 export default function RouteMiddleware({
@@ -71,7 +58,7 @@ export default function RouteMiddleware({
             if (
                 user &&
                 ["user", "admin", "expert"].includes(access) &&
-                (await getRole(user.uid)) !== access
+                (await getCurrUserRole()) !== access
             ) {
                 toast.warning("You are not authorized to access this page.");
                 hasRedirected.current = true;

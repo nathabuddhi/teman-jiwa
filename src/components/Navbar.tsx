@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { onAuthStateChanged, signOut, type User } from "firebase/auth";
-import { auth } from "@/handlers/firebase";
+import { auth } from "@/lib/firebase";
 import { toast } from "sonner";
+import { getCurrUserName } from "@/handlers/auth";
+import { HyperText } from "@/components/magicui/hyper-text";
 
 const navItems = [
     { name: "HOME", href: "/" },
@@ -19,10 +21,16 @@ const navItems = [
 export function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const [user, setUser] = useState<User | null>(null);
+    const [userName, setUserName] = useState<string>("Guest");
 
     useEffect(() => {
+        async function fetchUserName() {
+            setUserName(await getCurrUserName());
+        }
+
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
+            fetchUserName();
         });
         return () => unsubscribe();
     }, []);
@@ -60,7 +68,8 @@ export function Navbar() {
                 <div className="hidden md:block">
                     {user ? (
                         <Button
-                            className="bg-primarygreen hover:bg-darkgreen text-white rounded-xl"
+                            variant={"destructive"}
+                            className=" text-white rounded-xl"
                             onClick={handleLogout}>
                             LOGOUT
                         </Button>
@@ -69,9 +78,13 @@ export function Navbar() {
                             <Link to="/login">LOGIN</Link>
                         </Button>
                     )}
+                    <HyperText
+                        key={userName}
+                        className="text-xs w-30">{`Welcome, ${
+                        userName.split(" ")[0]
+                    }`}</HyperText>
                 </div>
 
-                {/* Mobile menu */}
                 <div className="md:hidden">
                     <Sheet open={isOpen} onOpenChange={setIsOpen}>
                         <SheetTrigger asChild>
