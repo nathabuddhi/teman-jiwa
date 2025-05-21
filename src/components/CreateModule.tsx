@@ -24,6 +24,7 @@ import { firestore as db } from "@/lib/firebase";
 import { addDoc, collection } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { useState } from "react";
+import { toast } from "sonner";
 
 const createModuleSchema = z.object({
     title: z.string().min(10).max(50),
@@ -65,18 +66,17 @@ export function CreateModule() {
         if (!user) return alert("You must be logged in.");
 
         try {
-            const docRef = await addDoc(collection(db, "modules"), {
+            await addDoc(collection(db, "modules"), {
                 ...data,
                 author_id: user.uid,
                 last_modified: new Date(),
             });
 
-            console.log("Module created with ID:", docRef.id);
+            toast.success("Successfully created module!");
             setOpen(false);
             form.reset();
         } catch (error) {
-            console.error("Error adding module:", error);
-            alert("Failed to create module.");
+            toast.error("Failed to create module: " + String(error));
         }
     }
 

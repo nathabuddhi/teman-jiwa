@@ -6,7 +6,8 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { onAuthStateChanged, signOut, type User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { toast } from "sonner";
-import { TypingAnimation } from "@/components/magicui/typing-animation";
+import { getCurrUserName } from "@/handlers/auth";
+import { HyperText } from "@/components/magicui/hyper-text";
 
 const navItems = [
     { name: "HOME", href: "/" },
@@ -20,10 +21,16 @@ const navItems = [
 export function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const [user, setUser] = useState<User | null>(null);
+    const [userName, setUserName] = useState<string>("Guest");
 
     useEffect(() => {
+        async function fetchUserName() {
+            setUserName(await getCurrUserName());
+        }
+
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
+            fetchUserName();
         });
         return () => unsubscribe();
     }, []);
@@ -45,7 +52,7 @@ export function Navbar() {
                         className="text-primarygreen font-bold text-lg mr-8">
                         TEMANJIWA
                     </Link>
-                    <TypingAnimation>Typing Animation</TypingAnimation>
+
                     <nav className="w-full flex flex-row justify-evenly px-2 pr-4">
                         {navItems.map((item) => (
                             <Link
@@ -71,6 +78,11 @@ export function Navbar() {
                             <Link to="/login">LOGIN</Link>
                         </Button>
                     )}
+                    <HyperText
+                        key={userName}
+                        className="text-xs w-30">{`Welcome, ${
+                        userName.split(" ")[0]
+                    }`}</HyperText>
                 </div>
 
                 <div className="md:hidden">

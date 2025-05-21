@@ -19,6 +19,38 @@ export async function getCurrUserId(): Promise<string> {
     });
 }
 
+export async function getCurrUserName(): Promise<string> {
+    if (!auth.currentUser) return "Guest";
+
+    const role = await getCurrUserRole();
+
+    if (role === "guest") return "Guest";
+    else if (role === "user") {
+        const document = await getDoc(
+            doc(collection(firestore, "users"), auth.currentUser.uid)
+        );
+
+        const docSnap = document;
+        return docSnap.exists() ? docSnap.data().full_name || "User" : "User";
+    } else if (role === "expert") {
+        const document = await getDoc(
+            doc(collection(firestore, "experts"), auth.currentUser.uid)
+        );
+
+        const docSnap = document;
+        return docSnap.exists()
+            ? docSnap.data().full_name || "Expert"
+            : "Expert";
+    } else if (role === "admin") {
+        const document = await getDoc(
+            doc(collection(firestore, "admins"), auth.currentUser.uid)
+        );
+
+        const docSnap = document;
+        return docSnap.exists() ? docSnap.data().full_name || "Admin" : "Admin";
+    } else return "Guest";
+}
+
 async function checkFirestoreRole(user_id: string): Promise<string> {
     const expert = await getDoc(doc(collection(firestore, "experts"), user_id));
     if (expert.exists()) return "expert";
@@ -65,8 +97,12 @@ export const registerAccount = async (
                 date_of_birth: dateOfBirth,
             }
         );
-    } catch (error: any) {
-        throw new Error(error.message || "Failed to register user");
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        } else {
+            throw new Error("Unknown error occurred during registeration.");
+        }
     }
 };
 
@@ -76,16 +112,24 @@ export const signIn = async (
 ): Promise<void> => {
     try {
         await signInWithEmailAndPassword(auth, email, password);
-    } catch (error: any) {
-        throw new Error(error.message || "Failed to sign in");
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        } else {
+            throw new Error("Unknown error occurred during sign-in.");
+        }
     }
 };
 
 export const signOut = async (): Promise<void> => {
     try {
         await firebaseSignOut(auth);
-    } catch (error: any) {
-        throw new Error(error.message || "Failed to sign out");
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        } else {
+            throw new Error("Unknown error occurred during sign-out.");
+        }
     }
 };
 
