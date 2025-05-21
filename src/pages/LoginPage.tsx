@@ -4,7 +4,7 @@ import type React from "react";
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
+import { toast, Toaster } from "sonner";
 import { signIn } from "../handlers/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -51,8 +51,9 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-lightgreen bg-opacity-20 px-4">
-            <Card className="w-full max-w-md">
+        <div className="flex items-center justify-center min-w-screen min-h-screen bg-lightgreen bg-opacity-20 px-4">
+            <Toaster richColors />
+            <Card className="w-full max-w-md bg-white border-0 shadow-lg">
                 <CardHeader className="space-y-1">
                     <CardTitle className="text-2xl font-bold text-center text-darkgreen">
                         Welcome Back
