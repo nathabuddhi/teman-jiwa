@@ -15,7 +15,7 @@ export function ModuleCard({ module }: ModuleCardProps) {
             className="cursor-pointer hover:shadow-md transition-all"
             onClick={() => navigate(`/module/${module.id}`)}>
             <img
-                src={module.image}
+                src={module.image_url}
                 alt={module.title}
                 className="rounded-t-md w-full h-40 object-cover"
             />

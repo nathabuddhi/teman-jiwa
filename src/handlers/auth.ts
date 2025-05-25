@@ -81,7 +81,8 @@ export const registerAccount = async (
     email: string,
     password: string,
     displayName: string,
-    dateOfBirth: Date
+    dateOfBirth: Date,
+    isExpert: boolean
 ): Promise<void> => {
     try {
         const userCredential = await createUserWithEmailAndPassword(
@@ -90,7 +91,10 @@ export const registerAccount = async (
             password
         );
         await setDoc(
-            doc(collection(firestore, "users"), userCredential.user.uid),
+            doc(
+                collection(firestore, isExpert ? "experts" : "users"),
+                userCredential.user.uid
+            ),
             {
                 email: userCredential.user.email,
                 full_name: displayName,
