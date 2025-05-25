@@ -9,7 +9,6 @@ import RegisterPage from "./pages/RegisterPage.tsx";
 import RouteMiddleware from "./middleware/RouteMiddleware.tsx";
 import ModulesPage from "./pages/ModulesPage.tsx";
 import ModuleDetailPage from "./pages/ModuleDetail.tsx";
-import AdminPage from "./pages/AdminPage.tsx";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
@@ -54,14 +53,6 @@ createRoot(document.getElementById("root")!).render(
                     element={
                         <RouteMiddleware access="guest">
                             <RegisterPage />
-                        </RouteMiddleware>
-                    }
-                />
-                <Route
-                    path="/admin"
-                    element={
-                        <RouteMiddleware access="admin">
-                            <AdminPage />
                         </RouteMiddleware>
                     }
                 />
