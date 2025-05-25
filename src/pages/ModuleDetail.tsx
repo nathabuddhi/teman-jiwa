@@ -100,8 +100,11 @@ export default function ModuleDetailPage() {
         return (
             <div className="flex items-center justify-center min-h-[400px]">
                 <div className="text-center space-y-2">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto"></div>
-                    <p className="text-muted-foreground">Loading module...</p>
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto">
+                        <p className="text-muted-foreground">
+                            Loading module...
+                        </p>
+                    </div>
                 </div>
             </div>
         );
@@ -117,7 +120,6 @@ export default function ModuleDetailPage() {
 
     return (
         <div className="max-w-4xl mx-auto p-6 space-y-8">
-            {/* Header Section */}
             <div className="space-y-4">
                 <div className="flex justify-between items-start">
                     <div className="space-y-3 flex-1">
@@ -164,7 +166,14 @@ export default function ModuleDetailPage() {
                     </div>
                     <div className="flex items-center gap-1">
                         <Clock className="h-4 w-4" />
-                        <span>5 minutes</span>
+                        <span>
+                            {Math.max(1, Math.ceil(mod.content.length / 500))}{" "}
+                            minute
+                            {Math.max(1, Math.ceil(mod.content.length / 500)) >
+                            1
+                                ? "s"
+                                : ""}
+                        </span>
                     </div>
                     {authorName && (
                         <Badge variant="secondary" className="ml-auto">
@@ -176,24 +185,22 @@ export default function ModuleDetailPage() {
 
             <Separator />
 
-            {/* Content Section */}
-            <div className="space-y-6">
+            <div className="space-y-6 flex gap-5">
                 {mod.image_url && (
-                    <div className="flex justify-center">
+                    <div className="flex justify-center w-2/6 align-middle">
                         <img
                             src={mod.image_url}
                             alt={mod.title}
-                            className="rounded-lg shadow-md max-w-full h-auto max-h-96 object-cover"
+                            className="rounded-lg max-w-full h-auto max-h-96 object-cover"
                         />
                     </div>
                 )}
 
-                <div className="prose prose-lg max-w-none">
+                <div className="prose prose-lg max-w-none w-4/6">
                     <div dangerouslySetInnerHTML={{ __html: mod.content }} />
                 </div>
             </div>
 
-            {/* Quiz Section */}
             {mod.quiz && mod.quiz.length > 0 && (
                 <Card className="mt-8">
                     <CardHeader>

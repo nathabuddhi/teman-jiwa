@@ -32,7 +32,7 @@ import { Label } from "./ui/label";
 const createModuleSchema = z.object({
     title: z.string().min(10).max(50),
     description: z.string().min(20).max(200),
-    content: z.string().min(100).max(1000),
+    content: z.string().min(100).max(10000),
     quiz: z.array(
         z.object({
             question: z.string().min(1, "Question is required"),
