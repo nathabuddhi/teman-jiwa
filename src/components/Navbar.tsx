@@ -49,7 +49,8 @@ export function Navbar() {
                 <div className="flex items-center w-full">
                     <Link
                         to="/"
-                        className="text-primarygreen font-bold text-lg mr-8">
+                        className="text-primarygreen font-bold text-lg mr-8 flex">
+                        <img className="w-6 mr-1" src="/icon-cropped.svg"></img>
                         TEMANJIWA
                     </Link>
 
