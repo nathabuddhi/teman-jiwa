@@ -9,6 +9,8 @@ import RegisterPage from "./pages/RegisterPage.tsx";
 import RouteMiddleware from "./middleware/RouteMiddleware.tsx";
 import ModulesPage from "./pages/ModulesPage.tsx";
 import ModuleDetailPage from "./pages/ModuleDetail.tsx";
+import FaqPage from "./pages/FaqPage.tsx";
+import ContactPage from "./pages/ContactPage.tsx";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
@@ -36,6 +38,22 @@ createRoot(document.getElementById("root")!).render(
                         element={
                             <RouteMiddleware access="public">
                                 <ModuleDetailPage />
+                            </RouteMiddleware>
+                        }
+                    />
+                    <Route
+                        path="/faq"
+                        element={
+                            <RouteMiddleware access="public">
+                                <FaqPage />
+                            </RouteMiddleware>
+                        }
+                    />
+                    <Route
+                        path="/contact"
+                        element={
+                            <RouteMiddleware access="public">
+                                <ContactPage />
                             </RouteMiddleware>
                         }
                     />
