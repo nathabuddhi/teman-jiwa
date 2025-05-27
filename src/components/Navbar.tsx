@@ -12,7 +12,7 @@ import { HyperText } from "@/components/magicui/hyper-text";
 const navItems = [
     { name: "HOME", href: "/" },
     { name: "MODULES", href: "/modules" },
-    { name: "APPOINTMENT", href: "/appointment" },
+    { name: "APPOINTMENTS", href: "/appointments" },
     { name: "FORUM", href: "/forum" },
     { name: "FAQ", href: "/faq" },
     { name: "CONTACT", href: "/contact" },

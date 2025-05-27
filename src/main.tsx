@@ -11,6 +11,8 @@ import ModulesPage from "./pages/ModulesPage.tsx";
 import ModuleDetailPage from "./pages/ModuleDetail.tsx";
 import FaqPage from "./pages/FaqPage.tsx";
 import ContactPage from "./pages/ContactPage.tsx";
+import ChatPage from "./pages/ChatPage.tsx";
+import AppointmentPage from "./pages/AppointmentPage.tsx";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
@@ -54,6 +56,22 @@ createRoot(document.getElementById("root")!).render(
                         element={
                             <RouteMiddleware access="public">
                                 <ContactPage />
+                            </RouteMiddleware>
+                        }
+                    />
+                    <Route
+                        path="/appointments"
+                        element={
+                            <RouteMiddleware access="auth">
+                                <AppointmentPage />
+                            </RouteMiddleware>
+                        }
+                    />
+                    <Route
+                        path="/appointment/:appointmentId"
+                        element={
+                            <RouteMiddleware access="auth">
+                                <ChatPage />
                             </RouteMiddleware>
                         }
                     />
