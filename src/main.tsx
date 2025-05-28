@@ -9,7 +9,10 @@ import RegisterPage from "./pages/RegisterPage.tsx";
 import RouteMiddleware from "./middleware/RouteMiddleware.tsx";
 import ModulesPage from "./pages/ModulesPage.tsx";
 import ModuleDetailPage from "./pages/ModuleDetail.tsx";
-import AdminPage from "./pages/AdminPage.tsx";
+import FaqPage from "./pages/FaqPage.tsx";
+import ContactPage from "./pages/ContactPage.tsx";
+import ChatPage from "./pages/ChatPage.tsx";
+import AppointmentPage from "./pages/AppointmentPage.tsx";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
@@ -40,6 +43,38 @@ createRoot(document.getElementById("root")!).render(
                             </RouteMiddleware>
                         }
                     />
+                    <Route
+                        path="/faq"
+                        element={
+                            <RouteMiddleware access="public">
+                                <FaqPage />
+                            </RouteMiddleware>
+                        }
+                    />
+                    <Route
+                        path="/contact"
+                        element={
+                            <RouteMiddleware access="public">
+                                <ContactPage />
+                            </RouteMiddleware>
+                        }
+                    />
+                    <Route
+                        path="/appointments"
+                        element={
+                            <RouteMiddleware access="auth">
+                                <AppointmentPage />
+                            </RouteMiddleware>
+                        }
+                    />
+                    <Route
+                        path="/appointment/:appointmentId"
+                        element={
+                            <RouteMiddleware access="auth">
+                                <ChatPage />
+                            </RouteMiddleware>
+                        }
+                    />
                 </Route>
                 <Route
                     path="/login"
@@ -57,17 +92,8 @@ createRoot(document.getElementById("root")!).render(
                         </RouteMiddleware>
                     }
                 />
-                <Route
-                    path="/admin"
-                    element={
-                        <RouteMiddleware access="admin">
-                            <AdminPage />
-                        </RouteMiddleware>
-                    }
-                />
             </Routes>
         </BrowserRouter>
     </StrictMode>
 );
-
 

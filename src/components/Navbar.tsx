@@ -12,7 +12,7 @@ import { HyperText } from "@/components/magicui/hyper-text";
 const navItems = [
     { name: "HOME", href: "/" },
     { name: "MODULES", href: "/modules" },
-    { name: "APPOINTMENT", href: "/appointment" },
+    { name: "APPOINTMENTS", href: "/appointments" },
     { name: "FORUM", href: "/forum" },
     { name: "FAQ", href: "/faq" },
     { name: "CONTACT", href: "/contact" },
@@ -49,7 +49,8 @@ export function Navbar() {
                 <div className="flex items-center w-full">
                     <Link
                         to="/"
-                        className="text-primarygreen font-bold text-lg mr-8">
+                        className="text-primarygreen font-bold text-lg mr-8 flex">
+                        <img className="w-6 mr-1" src="/icon-cropped.svg"></img>
                         TEMANJIWA
                     </Link>
 
@@ -65,6 +66,9 @@ export function Navbar() {
                     </nav>
                 </div>
 
+                <HyperText key={userName} className="text-xs w-30">{`Welcome, ${
+                    userName.split(" ")[0]
+                }`}</HyperText>
                 <div className="hidden md:block">
                     {user ? (
                         <Button
@@ -78,11 +82,6 @@ export function Navbar() {
                             <Link to="/login">LOGIN</Link>
                         </Button>
                     )}
-                    <HyperText
-                        key={userName}
-                        className="text-xs w-30">{`Welcome, ${
-                        userName.split(" ")[0]
-                    }`}</HyperText>
                 </div>
 
                 <div className="md:hidden">

@@ -25,7 +25,6 @@ export default function HomePage() {
                     </div>
                 </div>
 
-                {/* About Section */}
                 <div className="bg-lightgreen bg-opacity-30 p-6 md:p-10">
                     <h2 className="text-xl md:text-2xl font-semibold text-darkgreen mb-4">
                         About
