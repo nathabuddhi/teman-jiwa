@@ -7,7 +7,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Upload, X } from "lucide-react";
 import { registerAccount } from "../handlers/auth";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function RegisterPage() {
     const formSchema = z
@@ -61,6 +62,7 @@ export default function RegisterPage() {
                     message: "Password must contain a special character",
                 }),
             confirmPassword: z.string(),
+            avatar: z.instanceof(File).optional(),
         })
         .refine((data) => data.password === data.confirmPassword, {
             message: "Passwords do not match",
@@ -76,8 +78,8 @@ export default function RegisterPage() {
                 const dayDiff = today.getDate() - data.dateOfBirth.getDate();
 
                 return (
-                    age > 1 ||
-                    (age === 1 &&
+                    age > 12 ||
+                    (age === 12 &&
                         (monthDiff > 0 || (monthDiff === 0 && dayDiff >= 0)))
                 );
             },
@@ -89,6 +91,7 @@ export default function RegisterPage() {
 
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
+    const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -98,19 +101,43 @@ export default function RegisterPage() {
             email: "",
             password: "",
             confirmPassword: "",
+            avatar: undefined,
         },
     });
 
+    const handleAvatarChange = (file: File | null) => {
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setAvatarPreview(e.target?.result as string);
+            };
+            reader.readAsDataURL(file);
+            form.setValue("avatar", file);
+        } else {
+            setAvatarPreview(null);
+            form.setValue("avatar", undefined);
+        }
+    };
+
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         setLoading(true);
+
+        if (!values.avatar) {
+            toast.error("Please upload a profile picture.");
+            return;
+            setLoading(false);
+        }
+
         try {
             await registerAccount(
                 values.email,
                 values.password,
                 values.displayName,
                 values.dateOfBirth,
-                values.isExpert ?? false
+                values.isExpert ?? false,
+                values.avatar
             );
+
             toast.success("Account created successfully!");
             navigate("/login");
         } catch (error: any) {
@@ -163,6 +190,7 @@ export default function RegisterPage() {
                                     </FormItem>
                                 )}
                             />
+
                             <FormField
                                 control={form.control}
                                 name="dateOfBirth"
@@ -215,6 +243,7 @@ export default function RegisterPage() {
                                     </FormItem>
                                 )}
                             />
+
                             <FormField
                                 control={form.control}
                                 name="email"
@@ -231,6 +260,7 @@ export default function RegisterPage() {
                                     </FormItem>
                                 )}
                             />
+
                             <FormField
                                 control={form.control}
                                 name="password"
@@ -248,6 +278,7 @@ export default function RegisterPage() {
                                     </FormItem>
                                 )}
                             />
+
                             <FormField
                                 control={form.control}
                                 name="confirmPassword"
@@ -265,6 +296,57 @@ export default function RegisterPage() {
                                     </FormItem>
                                 )}
                             />
+
+                            <FormField
+                                control={form.control}
+                                name="avatar"
+                                render={() => (
+                                    <FormItem className="flex flex-col items-center">
+                                        <FormLabel>Profile Picture</FormLabel>
+                                        <div className="relative">
+                                            <Avatar className="h-20 w-20">
+                                                <AvatarImage
+                                                    src={
+                                                        avatarPreview ||
+                                                        "/placeholder.svg"
+                                                    }
+                                                />
+                                                <AvatarFallback>
+                                                    <Upload className="h-8 w-8 text-gray-400" />
+                                                </AvatarFallback>
+                                            </Avatar>
+                                            {avatarPreview && (
+                                                <Button
+                                                    type="button"
+                                                    variant="destructive"
+                                                    size="sm"
+                                                    className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0"
+                                                    onClick={() =>
+                                                        handleAvatarChange(null)
+                                                    }>
+                                                    <X className="h-3 w-3" />
+                                                </Button>
+                                            )}
+                                        </div>
+                                        <FormControl>
+                                            <Input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={(e) => {
+                                                    const file =
+                                                        e.target.files?.[0];
+                                                    handleAvatarChange(
+                                                        file || null
+                                                    );
+                                                }}
+                                                className="w-full"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
                             <FormField
                                 control={form.control}
                                 name="isExpert"
@@ -285,6 +367,7 @@ export default function RegisterPage() {
                                     </FormItem>
                                 )}
                             />
+
                             <Button
                                 type="submit"
                                 className="w-full bg-primarygreen hover:bg-darkgreen text-white"

@@ -16,6 +16,7 @@ const navItems = [
     { name: "FORUM", href: "/forum" },
     { name: "FAQ", href: "/faq" },
     { name: "CONTACT", href: "/contact" },
+    { name: "PROFILE", href: "/profile" },
 ];
 
 export function Navbar() {

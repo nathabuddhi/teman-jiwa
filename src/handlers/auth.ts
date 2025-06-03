@@ -5,6 +5,7 @@ import {
 } from "firebase/auth";
 import { auth, firestore } from "../lib/firebase";
 import { collection, doc, getDoc, setDoc } from "firebase/firestore";
+import supabase from "@/lib/supabase";
 
 export async function getCurrUserId(): Promise<string> {
     return new Promise((resolve, reject) => {
@@ -77,12 +78,41 @@ export async function getCurrUserRole(): Promise<string> {
     });
 }
 
+const uploadAvatar = async (
+    file: File,
+    userId: string
+): Promise<string | null> => {
+    try {
+        const fileExt = file.name.split(".").pop();
+        const fileName = `${userId}-${Date.now()}.${fileExt}`;
+        const filePath = `${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+            .from("avatars")
+            .upload(filePath, file);
+
+        if (uploadError) {
+            throw uploadError;
+        }
+
+        const { data: urlData } = supabase.storage
+            .from("avatars")
+            .getPublicUrl(filePath);
+
+        return urlData.publicUrl;
+    } catch (error) {
+        console.error("Error uploading avatar:", error);
+        return null;
+    }
+};
+
 export const registerAccount = async (
     email: string,
     password: string,
     displayName: string,
     dateOfBirth: Date,
-    isExpert: boolean
+    isExpert: boolean,
+    avatar: File
 ): Promise<void> => {
     try {
         const userCredential = await createUserWithEmailAndPassword(
@@ -90,6 +120,12 @@ export const registerAccount = async (
             email,
             password
         );
+
+        let avatarUrl = null;
+        if (avatar && userCredential.user) {
+            avatarUrl = await uploadAvatar(avatar, userCredential.user.uid);
+        }
+
         await setDoc(
             doc(
                 collection(firestore, isExpert ? "experts" : "users"),
@@ -99,6 +135,7 @@ export const registerAccount = async (
                 email: userCredential.user.email,
                 full_name: displayName,
                 date_of_birth: dateOfBirth,
+                avatar: avatarUrl,
             }
         );
     } catch (error) {
