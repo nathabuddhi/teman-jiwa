@@ -19,7 +19,6 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { Calendar } from "@/components/ui/calendar";
 import {
     Popover,
     PopoverContent,
@@ -36,6 +35,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function RegisterPage() {
     const formSchema = z
@@ -124,8 +124,8 @@ export default function RegisterPage() {
 
         if (!values.avatar) {
             toast.error("Please upload a profile picture.");
-            return;
             setLoading(false);
+            return;
         }
 
         try {
@@ -158,7 +158,7 @@ export default function RegisterPage() {
     };
 
     return (
-        <div className="flex items-center justify-center min-w-screen min-h-screen bg-lightgreen bg-opacity-20 px-4">
+        <div className="flex items-center justify-center min-h-screen w-screen bg-lightgreen bg-opacity-20 px-4 overflow-hidden">
             <Toaster richColors />
             <Card className="w-full max-w-md bg-white border-0 shadow-lg">
                 <CardHeader className="space-y-1">
@@ -169,214 +169,243 @@ export default function RegisterPage() {
                         Enter your details below to create your account
                     </CardDescription>
                 </CardHeader>
-                <CardContent>
-                    <Form {...form}>
-                        <form
-                            onSubmit={form.handleSubmit(onSubmit)}
-                            className="space-y-4">
-                            <FormField
-                                control={form.control}
-                                name="displayName"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Full Name</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder="John Doe"
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            <FormField
-                                control={form.control}
-                                name="dateOfBirth"
-                                render={({ field }) => (
-                                    <FormItem className="flex flex-col">
-                                        <FormLabel>Date of birth</FormLabel>
-                                        <Popover>
-                                            <PopoverTrigger className="w-full">
-                                                <Button
-                                                    variant={"outline"}
-                                                    className={cn(
-                                                        "w-full pl-3 text-left font-normal",
-                                                        !field.value &&
-                                                            "text-muted-foreground"
-                                                    )}>
-                                                    {field.value ? (
-                                                        format(
-                                                            field.value,
-                                                            "PPP"
-                                                        )
-                                                    ) : (
-                                                        <span>Pick a date</span>
-                                                    )}
-                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                </Button>
-                                            </PopoverTrigger>
-                                            <PopoverContent
-                                                className="w-auto p-0"
-                                                align="start">
-                                                <FormControl>
-                                                    <Calendar
-                                                        mode="single"
-                                                        selected={field.value}
-                                                        onSelect={
-                                                            field.onChange
-                                                        }
-                                                        disabled={(date) =>
-                                                            date > new Date() ||
-                                                            date <
-                                                                new Date(
-                                                                    "1900-01-01"
-                                                                )
-                                                        }
-                                                        initialFocus
-                                                    />
-                                                </FormControl>
-                                            </PopoverContent>
-                                        </Popover>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            <FormField
-                                control={form.control}
-                                name="email"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Email</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder="name@example.com"
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            <FormField
-                                control={form.control}
-                                name="password"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Password</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                type="password"
-                                                placeholder="••••••••"
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            <FormField
-                                control={form.control}
-                                name="confirmPassword"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Confirm Password</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                type="password"
-                                                placeholder="••••••••"
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            <FormField
-                                control={form.control}
-                                name="avatar"
-                                render={() => (
-                                    <FormItem className="flex flex-col items-center">
-                                        <FormLabel>Profile Picture</FormLabel>
-                                        <div className="relative">
-                                            <Avatar className="h-20 w-20">
-                                                <AvatarImage
-                                                    src={
-                                                        avatarPreview ||
-                                                        "/placeholder.svg"
-                                                    }
+                <ScrollArea className="h-[60vh] w-full">
+                    <CardContent className="pr-4">
+                        <Form {...form}>
+                            <form
+                                onSubmit={form.handleSubmit(onSubmit)}
+                                className="space-y-4">
+                                <FormField
+                                    control={form.control}
+                                    name="displayName"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Full Name</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder="John Doe"
+                                                    {...field}
                                                 />
-                                                <AvatarFallback>
-                                                    <Upload className="h-8 w-8 text-gray-400" />
-                                                </AvatarFallback>
-                                            </Avatar>
-                                            {avatarPreview && (
-                                                <Button
-                                                    type="button"
-                                                    variant="destructive"
-                                                    size="sm"
-                                                    className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0"
-                                                    onClick={() =>
-                                                        handleAvatarChange(null)
-                                                    }>
-                                                    <X className="h-3 w-3" />
-                                                </Button>
-                                            )}
-                                        </div>
-                                        <FormControl>
-                                            <Input
-                                                type="file"
-                                                accept="image/*"
-                                                onChange={(e) => {
-                                                    const file =
-                                                        e.target.files?.[0];
-                                                    handleAvatarChange(
-                                                        file || null
-                                                    );
-                                                }}
-                                                className="w-full"
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
-                            <FormField
-                                control={form.control}
-                                name="isExpert"
-                                render={({ field }) => (
-                                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                                        <div className="space-y-0.5">
+                                <FormField
+                                    control={form.control}
+                                    name="dateOfBirth"
+                                    render={({ field }) => (
+                                        <FormItem className="flex flex-col">
+                                            <FormLabel>Date of birth</FormLabel>
+                                            <Popover>
+                                                <PopoverTrigger className="w-full">
+                                                    <Button
+                                                        variant={"outline"}
+                                                        className={cn(
+                                                            "w-full pl-3 text-left font-normal",
+                                                            !field.value &&
+                                                                "text-muted-foreground"
+                                                        )}>
+                                                        {field.value ? (
+                                                            format(
+                                                                field.value,
+                                                                "PPP"
+                                                            )
+                                                        ) : (
+                                                            <span>
+                                                                Pick a date
+                                                            </span>
+                                                        )}
+                                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                    </Button>
+                                                </PopoverTrigger>
+                                                <PopoverContent
+                                                    className="w-[408px] p-0 max-w-md flex justify-center"
+                                                    align="start">
+                                                    <FormControl>
+                                                        <Input
+                                                            type="date"
+                                                            value={
+                                                                field.value
+                                                                    ? format(
+                                                                          field.value,
+                                                                          "yyyy-MM-dd"
+                                                                      )
+                                                                    : ""
+                                                            }
+                                                            onChange={(e) => {
+                                                                const dateValue =
+                                                                    e.target
+                                                                        .value
+                                                                        ? new Date(
+                                                                              e.target.value
+                                                                          )
+                                                                        : undefined;
+                                                                field.onChange(
+                                                                    dateValue
+                                                                );
+                                                            }}
+                                                            max={
+                                                                new Date()
+                                                                    .toISOString()
+                                                                    .split(
+                                                                        "T"
+                                                                    )[0]
+                                                            }
+                                                        />
+                                                    </FormControl>
+                                                </PopoverContent>
+                                            </Popover>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="email"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Email</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder="name@example.com"
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="password"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Password</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type="password"
+                                                    placeholder="••••••••"
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="confirmPassword"
+                                    render={({ field }) => (
+                                        <FormItem>
                                             <FormLabel>
-                                                Are you an Expert?
+                                                Confirm Password
                                             </FormLabel>
-                                        </div>
-                                        <FormControl>
-                                            <Switch
-                                                checked={field.value}
-                                                onCheckedChange={field.onChange}
-                                                aria-readonly
-                                            />
-                                        </FormControl>
-                                    </FormItem>
-                                )}
-                            />
+                                            <FormControl>
+                                                <Input
+                                                    type="password"
+                                                    placeholder="••••••••"
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
-                            <Button
-                                type="submit"
-                                className="w-full bg-primarygreen hover:bg-darkgreen text-white"
-                                disabled={loading}>
-                                {loading ? "Creating Account..." : "Register"}
-                            </Button>
-                        </form>
-                    </Form>
-                </CardContent>
+                                <FormField
+                                    control={form.control}
+                                    name="avatar"
+                                    render={() => (
+                                        <FormItem className="flex flex-col items-center">
+                                            <FormLabel>
+                                                Profile Picture
+                                            </FormLabel>
+                                            <div className="relative">
+                                                <Avatar className="h-20 w-20">
+                                                    <AvatarImage
+                                                        src={
+                                                            avatarPreview ||
+                                                            "/placeholder.svg"
+                                                        }
+                                                    />
+                                                    <AvatarFallback>
+                                                        <Upload className="h-8 w-8 text-gray-400" />
+                                                    </AvatarFallback>
+                                                </Avatar>
+                                                {avatarPreview && (
+                                                    <Button
+                                                        type="button"
+                                                        variant="destructive"
+                                                        size="sm"
+                                                        className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0"
+                                                        onClick={() =>
+                                                            handleAvatarChange(
+                                                                null
+                                                            )
+                                                        }>
+                                                        <X className="h-3 w-3" />
+                                                    </Button>
+                                                )}
+                                            </div>
+                                            <FormControl>
+                                                <Input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={(e) => {
+                                                        const file =
+                                                            e.target.files?.[0];
+                                                        handleAvatarChange(
+                                                            file || null
+                                                        );
+                                                    }}
+                                                    className="w-full"
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="isExpert"
+                                    render={({ field }) => (
+                                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                                            <div className="space-y-0.5">
+                                                <FormLabel>
+                                                    Are you an Expert?
+                                                </FormLabel>
+                                            </div>
+                                            <FormControl>
+                                                <Switch
+                                                    checked={field.value}
+                                                    onCheckedChange={
+                                                        field.onChange
+                                                    }
+                                                    aria-readonly
+                                                />
+                                            </FormControl>
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <Button
+                                    type="submit"
+                                    className="w-full bg-primarygreen hover:bg-darkgreen text-white"
+                                    disabled={loading}>
+                                    {loading
+                                        ? "Creating Account..."
+                                        : "Register"}
+                                </Button>
+                            </form>
+                        </Form>
+                    </CardContent>
+                </ScrollArea>
                 <CardFooter className="flex flex-col space-y-4">
                     <div className="text-center text-sm">
                         Already have an account?{" "}
